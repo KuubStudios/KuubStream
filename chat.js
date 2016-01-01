@@ -24,9 +24,9 @@ module.exports = {
 
 	clientDisconnected: function(index) {
 		var client = this.clients[index];
-		if(name !== undefined) {
-			this.rooms[client.room].broadcast({ type: "message", admin: true, from: "server", content: name + " has disconnected" });
-			console.log(util.format("%s (%s) disconnected from %s", name, client.connection.remoteAddress, client.room));
+		if(client.name !== undefined) {
+			this.rooms[client.room].broadcast({ type: "message", admin: true, from: "server", content: client.name + " has disconnected" });
+			console.log(util.format("%s (%s) disconnected from %s", client.name, client.connection.remoteAddress, client.room));
 		} else {
 			console.log(util.format("%s disconnected from %s", client.connection.remoteAddress, client.room));
 		}
@@ -65,7 +65,7 @@ module.exports = {
 
 	messageReceived: function(index, json) {
 		var client = this.clients[index];
-		
+
 		if(!client.registered) {
 			return;
 		}

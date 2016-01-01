@@ -23,46 +23,50 @@ module.exports = {
 	},
 
 	clientDisconnected: function(index) {
-		var name = this.clients[index].name;
+		var client = this.clients[index];
 		if(name !== undefined) {
-			this.rooms[this.clients[index].room].broadcast({ type: "message", admin: true, from: "server", content: name + " has disconnected" });
-			console.log(util.format("%s (%s) disconnected from %s", name, this.clients[index].connection.remoteAddress, this.clients[index].room));
+			this.rooms[client.room].broadcast({ type: "message", admin: true, from: "server", content: name + " has disconnected" });
+			console.log(util.format("%s (%s) disconnected from %s", name, client.connection.remoteAddress, client.room));
 		} else {
-			console.log(util.format("%s disconnected from %s", this.clients[index].connection.remoteAddress, this.clients[index].room));
+			console.log(util.format("%s disconnected from %s", client.connection.remoteAddress, client.room));
 		}
 
-		this.rooms[this.clients[index].room].removeClient(index);
+		this.rooms[client.room].removeClient(index);
 		this.clients[index] = undefined;
 	},
 
 	registerUser: function(index, json) {
-		if(this.clients[index].registered) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "already registered" }));
+		var client = this.clients[index];
+
+		if(client.registered) {
+			client.connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "already registered" }));
 			return;
 		}
 
 		if(json.name == undefined || json.name.length < 2 || json.name.length > 20 || !json.name.match(/^[A-Za-z0-9_\-]+$/)) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "invalid name" }));
+			client.connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "invalid name" }));
 			return;
 		}
 
-		if(this.rooms[this.clients[index].room].usernameTaken(json.name)) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "username taken" }));
+		if(this.rooms[client.room].usernameTaken(json.name)) {
+			client.connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "username taken" }));
 			return;
 		}
 
-		console.log(util.format("%s registered as %s to %s", this.clients[index].connection.remoteAddress, json.name, this.clients[index].room));
+		console.log(util.format("%s registered as %s to %s", client.connection.remoteAddress, json.name, client.room));
 
 		this.clients[index].name = json.name;
 		this.clients[index].color = this.colors[Math.floor(Math.random() * this.colors.length)];
 		this.clients[index].registered = true;
 
-		this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: true }));
-		this.rooms[this.clients[index].room].sendMessage("server", json.name + " has connected", true);
+		client.connection.sendUTF(JSON.stringify({ type: "register", success: true }));
+		this.rooms[client.room].sendMessage("server", json.name + " has connected", true);
 	},
 
 	messageReceived: function(index, json) {
-		if(!this.clients[index].registered) {
+		var client = this.clients[index];
+		
+		if(!client.registered) {
 			return;
 		}
 
@@ -71,75 +75,11 @@ module.exports = {
 			return;
 		}
 
-		console.log(util.format("%s > %s: %s", this.clients[index].name, this.clients[index].room, text));
+		console.log(util.format("%s > %s: %s", client.name, client.room, text));
 
 		text = linkify(text, { target: "_blank" });
 		text = kappa.kappafy(text);
 
-		this.rooms[this.clients[index].room].sendMessage(this.clients[index], text);
+		this.rooms[client.room].sendMessage(client, text);
 	}
-
-	/*
-	clients: [],
-	usernames: [],
-
-	clientConnected: function(connection) {
-		return this.clients.push({ connection: connection, registered: false }) - 1;
-	},
-
-	clientDisconnected: function(index) {
-		var name = this.clients[index].name;
-		if(name !== undefined) {
-			this.broadcast({ type: "message", admin: true, from: "server", content: name + " has disconnected" });
-		}
-
-		this.usernames[index] = undefined;
-		this.clients[index] = undefined;
-	},
-
-	registerUser: function(index, json) {
-		if(this.clients[index].registered) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "already registered" }));
-			return;
-		}
-
-		if(json.name == undefined || json.name.length < 2 || json.name.length > 20 || !json.name.match(/^[A-Za-z0-9_\-]+$/)) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "invalid name" }));
-			return;
-		}
-
-		if(this.usernames.indexOf(json.name) > -1) {
-			this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: false, reason: "username taken" }));
-			return;
-		}
-
-		this.usernames[index] = json.name;
-		this.clients[index].name = json.name;
-		this.clients[index].color = this.colors[Math.floor(Math.random() * this.colors.length)];
-		this.clients[index].registered = true;
-
-		this.clients[index].connection.sendUTF(JSON.stringify({ type: "register", success: true }));
-		this.sendMessage("server", json.name + " has connected", true);
-	},
-
-	sendMessage: function(from, content, admin) {
-		if(typeof from === "object") {
-			this.broadcast({ type: "message", admin: !!admin, from: from.name, color: from.color, content: content });
-		} else {
-			this.broadcast({ type: "message", admin: !!admin, from: from, content: content });
-		}
-	},
-
-	broadcast: function(msg) {
-		if(typeof msg !== "string") {
-			msg = JSON.stringify(msg);
-		}
-
-		for(var i=0; i < this.clients.length; i++) {
-			if(this.clients[i] != undefined && this.clients[i].connection != undefined) {
-				this.clients[i].connection.sendUTF(msg);
-			}
-		}
-	}
-	*/
 }

@@ -46,21 +46,6 @@ websocket.on("request", function(req) {
 			chat.registerUser(index, json);
 		} else if(json.type == "message") {
 			chat.messageReceived(index, json);
-			/*
-			if(!chat.clients[index].registered) {
-				return;
-			}
-
-			var text = json.content.trim();
-			if(text.length == 0 || text.length > 5000) {
-				return;
-			}
-
-			text = linkify(text, { target: "_blank" });
-			text = kappa.kappafy(text);
-
-			chat.sendMessage(chat.clients[index], text);
-			*/
 		}
 	});
 

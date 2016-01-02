@@ -47,6 +47,13 @@ $(function() {
 			type: "register",
 			name: username
 		}));
+
+		if(Cookies.get("color") != undefined) {
+			ws.send(JSON.stringify({
+				type: "color",
+				color: Cookies.get("color")
+			}));
+		}
 	}
 
 	$("#chat-join").click(function() {
@@ -88,7 +95,15 @@ $(function() {
 		if($("#chat-settings").hasClass("visible")) {
 			$("#chat-settings").removeClass("visible");
 		} else {
-			$("#chat-settings").removeClass("visible").addClass("visible");
+			$("#chat-settings").addClass("visible");
+		}
+	});
+
+	$("#userlist-button").click(function() {
+		if($("#chat-userlist").hasClass("visible")) {
+			$("#chat-userlist").removeClass("visible");
+		} else {
+			$("#chat-userlist").addClass("visible");
 		}
 	});
 
@@ -112,6 +127,28 @@ $(function() {
 
 	$("#chk-theme").prop("checked", Cookies.get("theme") == "true").change();
 	$("#chk-timestamps").prop("checked", Cookies.get("timestamps") == "true").change();
+
+	$("#btn-clearchat").click(function() {
+		$("#chat-lines").empty();
+	});
+
+	function rgb2hex(orig){
+		var rgb = orig.replace(/\s/g,'').match(/^rgba?\((\d+),(\d+),(\d+)/i);
+		return (rgb && rgb.length === 4) ? "#" +
+		("0" + parseInt(rgb[1],10).toString(16)).slice(-2) +
+		("0" + parseInt(rgb[2],10).toString(16)).slice(-2) +
+		("0" + parseInt(rgb[3],10).toString(16)).slice(-2) : orig;
+	}
+
+	$("#chat-colors a").click(function() {
+		var color = rgb2hex($(this).css("background-color")).toUpperCase();
+		Cookies.set("color", color);
+
+		ws.send(JSON.stringify({
+			type: "color",
+			color: color
+		}));
+	});
 
 	function showLoginDialog() {
 		$("#chat-username").val(Cookies.get("username"));
@@ -146,6 +183,10 @@ $(function() {
 	}
 
 	function formatTime(unix) {
+		if(unix == undefined) {
+			return;
+		}
+
 		var date = new Date(unix * 1000);
 
 		var hours = date.getHours();
@@ -175,6 +216,10 @@ $(function() {
 		li.append($("<span>").addClass("message").html(text));
 
 		$("#chat-lines").append(li);
+		if($("#chat-lines li").size() > 500) {
+			$("#chat-lines li:first-child").remove();
+		}
+
 		$("#chat-messages .tse-scroll-content").scrollTop($("#chat-messages .tse-scroll-content")[0].scrollHeight);
 	}
 
@@ -209,6 +254,14 @@ $(function() {
 				}
 			} else if(json.type == "message") {
 				appendMessage(json);
+			} else if(json.type == "color") {
+				$("#chat-colors a").removeClass("selected");
+				$("#chat-colors a").each(function(i) {
+					if(rgb2hex($(this).css("background-color")).toUpperCase() == json.color) {
+						$(this).addClass("selected");
+						return false;
+					}
+				});
 			}
 		};
 

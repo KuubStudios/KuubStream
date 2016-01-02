@@ -46,6 +46,8 @@ websocket.on("request", function(req) {
 			chat.registerUser(index, json);
 		} else if(json.type == "message") {
 			chat.messageReceived(index, json);
+		} else if(json.type == "color") {
+			chat.setColor(index, json.color);
 		}
 	});
 

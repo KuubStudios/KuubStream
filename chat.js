@@ -25,7 +25,7 @@ module.exports = {
 	clientDisconnected: function(index) {
 		var client = this.clients[index];
 		if(client.name !== undefined) {
-			this.rooms[client.room].broadcast({ type: "message", admin: true, from: "server", content: client.name + " has disconnected" });
+			this.rooms[client.room].sendMessage("server", client.name + " has disconnected", true);
 			console.log(util.format("%s (%s) disconnected from %s", client.name, client.connection.remoteAddress, client.room));
 		} else {
 			console.log(util.format("%s disconnected from %s", client.connection.remoteAddress, client.room));
@@ -33,6 +33,19 @@ module.exports = {
 
 		this.rooms[client.room].removeClient(index);
 		this.clients[index] = undefined;
+	},
+
+	setColor: function(index, color) {
+		color = "" + color;
+
+		if(color != "undefined" && this.colors.indexOf(color.toUpperCase()) > -1) {
+			color = color.toUpperCase();
+		} else {
+			color = this.colors[Math.floor(Math.random() * this.colors.length)];
+		}
+
+		this.clients[index].color = color;
+		this.clients[index].connection.sendUTF(JSON.stringify({ type: "color", color: color }));
 	},
 
 	registerUser: function(index, json) {
@@ -56,7 +69,8 @@ module.exports = {
 		console.log(util.format("%s registered as %s to %s", client.connection.remoteAddress, json.name, client.room));
 
 		this.clients[index].name = json.name;
-		this.clients[index].color = this.colors[Math.floor(Math.random() * this.colors.length)];
+		//this.clients[index].color = this.colors[Math.floor(Math.random() * this.colors.length)];
+		this.setColor(index);
 		this.clients[index].registered = true;
 
 		client.connection.sendUTF(JSON.stringify({ type: "register", success: true }));

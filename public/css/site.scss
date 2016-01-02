@@ -304,6 +304,10 @@ a:hover {
 	font-size: 14px !important;
 }
 
+#chat-buttons a {
+	cursor: pointer;
+}
+
 #chat-buttons a:not(:first-child) {
 	margin-left: 15px;
 }
@@ -313,7 +317,7 @@ a:hover {
 	font-size: 1.5em;
 }
 
-#chat-settings {
+.popup-menu {
 	width: 222px;
 	min-height: 100px;
 
@@ -348,4 +352,26 @@ a:hover {
 .menu-content p {
 	padding-top: 0;
 	margin-bottom: 8px;
+}
+
+#chat-colors {
+	margin-bottom: 10px;
+}
+
+.chat-colors-swatch {
+	display: block;
+	float: left;
+	height: 18px;
+	width: 18px;
+	margin: 4px;
+	cursor: pointer;
+}
+
+.chat-colors-swatch:hover {
+	border: 2px solid #bbb;
+}
+
+.chat-colors-swatch.selected {
+	border: 2px solid #222;
+	box-shadow: inset 0 0 0 1px #fff;
 }

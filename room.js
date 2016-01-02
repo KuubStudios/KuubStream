@@ -1,6 +1,7 @@
 function Room(chat) {
 	this.chat = chat;
 	this.clients = [];
+	this.lastMsg = 0;
 }
 
 Room.prototype.addClient = function(index) {
@@ -41,9 +42,9 @@ Room.prototype.broadcast = function(msg) {
 Room.prototype.sendMessage = function(from, content, admin) {
 	var time = Math.floor(new Date() / 1000);
 	if(typeof from === "object") {
-		this.broadcast({ type: "message", admin: !!admin, from: from.name, color: from.color, content: content, time: time });
+		this.broadcast({ type: "message", id: this.lastMsg++, admin: !!admin, from: from.name, color: from.color, content: content, time: time });
 	} else {
-		this.broadcast({ type: "message", admin: !!admin, from: from, content: content, time: time });
+		this.broadcast({ type: "message", id: this.lastMsg++, admin: !!admin, from: from, content: content, time: time });
 	}
 };
 

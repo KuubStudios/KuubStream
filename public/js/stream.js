@@ -41,6 +41,7 @@ $(function() {
 			return;
 		}
 
+		Cookies.set("username", username);
 		$("#login-error").text("");
 		ws.send(JSON.stringify({
 			type: "register",
@@ -87,27 +88,33 @@ $(function() {
 		if($("#chat-settings").hasClass("visible")) {
 			$("#chat-settings").removeClass("visible");
 		} else {
-			$("#chat-settings").addClass("visible");
+			$("#chat-settings").removeClass("visible").addClass("visible");
 		}
 	});
 
 	$("#chk-theme").change(function() {
+		Cookies.set("theme", this.checked);
 		if(this.checked) {
-			$("#container").addClass("theme-light");
+			$("#container").removeClass("theme-light").addClass("theme-light");
 		} else {
 			$("#container").removeClass("theme-light");
 		}
 	});
 
 	$("#chk-timestamps").change(function() {
+		Cookies.set("timestamps", this.checked);
 		if(this.checked) {
-			$("#chat-messages").addClass("show-timestamps");
+			$("#chat-messages").removeClass("theme-light").addClass("show-timestamps");
 		} else {
 			$("#chat-messages").removeClass("show-timestamps");
 		}
 	});
 
+	$("#chk-theme").prop("checked", Cookies.get("theme") == "true").change();
+	$("#chk-timestamps").prop("checked", Cookies.get("timestamps") == "true").change();
+
 	function showLoginDialog() {
+		$("#chat-username").val(Cookies.get("username"));
 		$("#chat-content").removeClass("disabled").addClass("disabled");
 		$("#chat-textarea").attr("disabled", true);
 		$("#chat-button").attr("disabled", true);

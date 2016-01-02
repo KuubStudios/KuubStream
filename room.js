@@ -16,7 +16,8 @@ Room.prototype.removeClient = function(index) {
 
 Room.prototype.usernameTaken = function(name) {
 	for(var i=0; i < this.clients.length; i++) {
-		if(this.chat.clients[this.clients[i]] != undefined && this.chat.clients[this.clients[i]].name == name) {
+		var client = this.chat.clients[this.clients[i]];
+		if(client != undefined && client.name != undefined && client.name.toLowerCase() == name.toLowerCase()) {
 			return true;
 		}
 	}
@@ -38,10 +39,11 @@ Room.prototype.broadcast = function(msg) {
 };
 
 Room.prototype.sendMessage = function(from, content, admin) {
+	var time = Math.floor(new Date() / 1000);
 	if(typeof from === "object") {
-		this.broadcast({ type: "message", admin: !!admin, from: from.name, color: from.color, content: content });
+		this.broadcast({ type: "message", admin: !!admin, from: from.name, color: from.color, content: content, time: time });
 	} else {
-		this.broadcast({ type: "message", admin: !!admin, from: from, content: content });
+		this.broadcast({ type: "message", admin: !!admin, from: from, content: content, time: time });
 	}
 };
 

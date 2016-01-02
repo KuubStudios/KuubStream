@@ -1,5 +1,6 @@
 @import "_normalize";
 @import "_trackpad-scroll-emulator";
+@import "_theme";
 
 $chat-width: 340px;
 $chat-header-height: 50px;
@@ -36,7 +37,7 @@ body {
 }
 
 a {
-	color: #a68ed2;
+	color: #6441a5;
 	text-decoration: none;
 }
 
@@ -69,7 +70,6 @@ a:hover {
 .primary-button-transparent {
 	background: transparent;
 	color: #6441a5;
-	padding: 0 10px;
 	font-size: 12px;
 	line-height: 30px;
 	height: 30px;
@@ -78,6 +78,15 @@ a:hover {
 
 .primary-button-transparent:hover {
 	color: #7550ba;
+}
+
+.modal {
+	display: none;
+	z-index: 1000;
+}
+
+.visible {
+	display: initial;
 }
 
 #container {
@@ -185,6 +194,10 @@ a:hover {
 	overflow: hidden;
 }
 
+.chat-line a {
+	color: #a68ed2;
+}
+
 .chat-line.admin .message {
 	color: #666
 }
@@ -198,7 +211,13 @@ a:hover {
 }
 
 .chat-line .timestamp {
+	color: #8c8c8c;
+	margin-right: 5px;
 	display: none;
+}
+
+.show-timestamps .chat-line .timestamp {
+	display: initial;
 }
 
 .chat-line .from {
@@ -211,6 +230,12 @@ a:hover {
 
 .chat-line .message {
 
+}
+
+.mention {
+	color: #32323e;
+    background-color: #fff;
+    padding: 3px 5px;
 }
 
 .emoticon {
@@ -273,4 +298,54 @@ a:hover {
 
 #chat-buttons {
 	width: 100%;
+}
+
+#userlist-button .fa {
+	font-size: 14px !important;
+}
+
+#chat-buttons a:not(:first-child) {
+	margin-left: 15px;
+}
+
+#chat-buttons .fa {
+	vertical-align: middle;
+	font-size: 1.5em;
+}
+
+#chat-settings {
+	width: 222px;
+	min-height: 100px;
+
+	position: absolute;
+	bottom: 50px;
+	left: 20px;
+	padding: 10px 0;
+
+	background: #fff;
+	box-shadow: rgba(0,0,0,.2) 0 0 0 1px inset;
+}
+
+.menu-header {
+	font-size: 12px;
+	margin-bottom: 5px;
+	text-transform: uppercase;
+	color: #8c8c8c;
+	padding: 15px 0 5px;
+	margin: 10px 20px 0;
+	border-top: 1px solid rgba(0,0,0,.2);
+}
+
+.menu-header:first-child {
+	margin-top: 0;
+    border-top: none;
+}
+
+.menu-content {
+	padding: 10px 20px;
+}
+
+.menu-content p {
+	padding-top: 0;
+	margin-bottom: 8px;
 }

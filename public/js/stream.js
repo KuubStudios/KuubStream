@@ -83,6 +83,30 @@ $(function() {
 		}
 	});
 
+	$("#settings-button").click(function() {
+		if($("#chat-settings").hasClass("visible")) {
+			$("#chat-settings").removeClass("visible");
+		} else {
+			$("#chat-settings").addClass("visible");
+		}
+	});
+
+	$("#chk-theme").change(function() {
+		if(this.checked) {
+			$("#container").addClass("theme-light");
+		} else {
+			$("#container").removeClass("theme-light");
+		}
+	});
+
+	$("#chk-timestamps").change(function() {
+		if(this.checked) {
+			$("#chat-messages").addClass("show-timestamps");
+		} else {
+			$("#chat-messages").removeClass("show-timestamps");
+		}
+	});
+
 	function showLoginDialog() {
 		$("#chat-content").removeClass("disabled").addClass("disabled");
 		$("#chat-textarea").attr("disabled", true);
@@ -97,6 +121,35 @@ $(function() {
 		$("#chat-login").css("display", "none");
 	}
 
+	function checkMention(text) {
+		var split = text.split(/\b/);
+		var len = split.length;
+		var buffer = "";
+
+		for(var i=0; i < len; i++) {
+			var word = split[i];
+			if(word.toLowerCase() == username.toLowerCase()) {
+				buffer += '<span class="mention">' + word + '</span>';
+			} else {
+				buffer += word;
+			}
+		}
+
+		return buffer;
+	}
+
+	function formatTime(unix) {
+		var date = new Date(unix * 1000);
+
+		var hours = date.getHours();
+		var minutes = date.getMinutes();
+
+		if(hours < 10) hours = "0" + hours;
+		if(minutes < 10) minutes = "0" + minutes;
+
+		return "" + hours + ":" + minutes;
+	}
+
 	function appendMessage(json) {
 		var li = $("<li>").addClass("chat-line");
 
@@ -104,10 +157,15 @@ $(function() {
 			li.addClass("admin");
 		}
 
-		li.append($("<span>").addClass("timestamp").text(json.time));
+		var text = json.content;
+		if(json.from != "server" && json.from.toLowerCase() != username.toLowerCase()) {
+			text = checkMention(text);
+		}
+
+		li.append($("<span>").addClass("timestamp").text(formatTime(json.time)));
 		li.append($("<span>").addClass("from").css("color", json.color).text(json.from));
 		li.append('<span class="colon">:</span>');
-		li.append($("<span>").addClass("message").html(json.content));
+		li.append($("<span>").addClass("message").html(text));
 
 		$("#chat-lines").append(li);
 		$("#chat-messages .tse-scroll-content").scrollTop($("#chat-messages .tse-scroll-content")[0].scrollHeight);
@@ -133,7 +191,7 @@ $(function() {
 		};
 
 		ws.onmessage = function(msg) {
-			console.log(msg);
+			//console.log(msg);
 
 			var json = JSON.parse(msg.data);
 			if(json.type == "register") {

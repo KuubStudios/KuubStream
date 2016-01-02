@@ -1,0 +1,32 @@
+.theme-light {
+
+}
+
+.theme-light #right-col {
+	color: #3d3d42;
+	background: #f2f2f2;
+}
+
+.theme-light #chat-header {
+	box-shadow: inset 0 -1px 0 0 #dedede;
+}
+
+.theme-light #chat-login {
+	background: rgba(250,250,250,0.9);
+    box-shadow: 0px 0px 4px #999;
+}
+
+.theme-light .text-input {
+	color: #666;
+	background: #fff;
+	border: 1px solid #dedede;
+}
+
+.theme-light .mention {
+	color: #fff;
+	background-color: #101014;
+}
+
+.theme-light .chat-line a {
+	color: #6441a5;
+}

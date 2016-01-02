@@ -17,13 +17,57 @@
 				<p id="room-title"><%= name %></p>
 			</div>
 
-			<div id="chat-login" style="display:none">
+			<div id="chat-login" class="modal">
 				<input type="text" id="chat-username" class="text-input" placeholder="Pick a username">
 				<button id="chat-join" class="primary-button float-right">Join</button>
 				<div id="login-error" class="float-left"></div>
 			</div>
 
 			<div id="chat-content">
+				<div id="chat-settings" class="modal">
+					<div class="menu-header">Chat Options</div>
+					<div class="menu-content">
+						<div id="chat-colors">
+							<a style="background-color:#FF0000" class="chat-colors-swatch selected"></a>
+							<a style="background-color:#0000FF" class="chat-colors-swatch"></a>
+							<a style="background-color:#008000" class="chat-colors-swatch"></a>
+							<a style="background-color:#B22222" class="chat-colors-swatch"></a>
+							<a style="background-color:#FF7F50" class="chat-colors-swatch"></a>
+							<a style="background-color:#9ACD32" class="chat-colors-swatch"></a>
+							<a style="background-color:#FF4500" class="chat-colors-swatch"></a>
+							<a style="background-color:#2E8B57" class="chat-colors-swatch"></a>
+							<a style="background-color:#DAA520" class="chat-colors-swatch"></a>
+							<a style="background-color:#D2691E" class="chat-colors-swatch"></a>
+							<a style="background-color:#5F9EA0" class="chat-colors-swatch"></a>
+							<a style="background-color:#1E90FF" class="chat-colors-swatch"></a>
+							<a style="background-color:#FF69B4" class="chat-colors-swatch"></a>
+							<a style="background-color:#8A2BE2" class="chat-colors-swatch"></a>
+							<a style="background-color:#00FF7F" class="chat-colors-swatch"></a>
+						</div>
+
+						<p>
+							<input id="chk-timestamps" type="checkbox">
+							Time Stamps
+						</p>
+
+						<p>
+							<input id="chk-theme" type="checkbox">
+							Light Theme
+						</p>
+
+						<p>
+							<a href="#">Clear Chat</a>
+						</p>
+					</div>
+					<!--
+					<div class="menu-header">Mod tools</div>
+					<div class="menu-content">
+					
+					</div>
+					-->
+				</div>
+				<div id="chat-userlist" class="modal"></div>
+
 				<div id="chat-messages">
 					<div class="tse-scrollable">
 						<div class="tse-content">
@@ -38,7 +82,8 @@
 						<textarea id="chat-textarea" class="text-input" placeholder="Send a message"></textarea>
 					</div>
 					<div id="chat-buttons" class="clearfix">
-						<!--<button id="settings-button" class="primary-button-transparent float-left"><i class="fa fa-cog fa-2x"></i></button>-->
+						<a id="settings-button" class="primary-button-transparent float-left"><i class="fa fa-cog"></i></a>
+						<a id="userlist-button" class="primary-button-transparent float-left"><i class="fa fa-list"></i></a>
 						<button id="chat-button" class="primary-button float-right">Chat</button>
 					</div>
 				</div>

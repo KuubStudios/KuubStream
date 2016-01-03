@@ -53,6 +53,12 @@ a:hover {
 	background-clip: padding-box;
 }
 
+.text-input:focus, .text-input:active {
+	outline: 0;
+	box-shadow: none;
+	border: 1px solid rgba(255,255,255,0.2);
+}
+
 .primary-button {
 	background: #6441a5;
 	color: #fff;
@@ -327,7 +333,7 @@ a:hover {
 	padding: 10px 0;
 
 	background: #fff;
-	box-shadow: rgba(0,0,0,.2) 0 0 0 1px inset;
+	box-shadow: rgba(0,0,0,0.2) 0 0 0 1px inset;
 }
 
 .menu-header {
@@ -337,7 +343,7 @@ a:hover {
 	color: #8c8c8c;
 	padding: 15px 0 5px;
 	margin: 10px 20px 0;
-	border-top: 1px solid rgba(0,0,0,.2);
+	border-top: 1px solid rgba(0,0,0,0.2);
 }
 
 .menu-header:first-child {

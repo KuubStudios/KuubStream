@@ -1,5 +1,6 @@
-.theme-light {
-
+.theme-light .text-input:focus, .theme-light .text-input:active {
+	box-shadow: 0 0 3px rgba(100,65,164,.2);
+    border: 1px solid #ccc;
 }
 
 .theme-light #right-col {

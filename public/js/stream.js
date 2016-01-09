@@ -3,19 +3,32 @@ $(function() {
 
 	var channel = $("#container").data("channel");
 
-	jwplayer.key = "tLc/F7baAVot/r1LiOBmCg8muQ+qhMxWmmfZmg==";
-	var player = jwplayer("player");
-	player.setup({
-		aboutlink: "https://kuubstudios.com/",
-		abouttext:"Kuub Studios Cinema",
-		skin: "glow",
-		image: "offline.png",
-		file: "rtmp://vps.kuubstudios.com/stream/" + channel,
-		autostart: "true",
-		stretching: "uniform",
-		width: "100%",
-		height: "100%"
-	});
+	var player;
+	if(window.location.hash == "#dash") {
+		var video = $("<video>").attr("id", "video-player").attr("controls", true).attr("autoplay", true).attr("preload", "none");
+		$("#player").text("").append(video);
+
+		var context = new Dash.di.DashContext();
+		player = new MediaPlayer(context); 
+		player.startup();
+		player.attachView(video[0]);
+		player.attachSource("https://stream.kuubstudios.com/dash/" + channel + ".mpd");
+	} else {
+		jwplayer.key = "tLc/F7baAVot/r1LiOBmCg8muQ+qhMxWmmfZmg==";
+
+		player = jwplayer("player");
+		player.setup({
+			aboutlink: "https://kuubstudios.com/",
+			abouttext:"Kuub Studios Cinema",
+			skin: "glow",
+			image: "offline.png",
+			file: "rtmp://vps.kuubstudios.com/stream/" + channel,
+			autostart: "true",
+			stretching: "uniform",
+			width: "100%",
+			height: "100%"
+		});
+	}
 
 	var username;
 	function joinChat() {

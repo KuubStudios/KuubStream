@@ -30,7 +30,7 @@ $(function() {
 		});
 	}
 
-	var username;
+	var username, usercolor;
 	function joinChat() {
 		username = $("#chat-username").val().trim();
 
@@ -62,9 +62,15 @@ $(function() {
 		}));
 
 		if(Cookies.get("color") != undefined) {
+			usercolor = Cookies.get("color");
 			ws.send(JSON.stringify({
 				type: "color",
 				color: Cookies.get("color")
+			}));
+		} else if(usercolor != undefined) {
+			ws.send(JSON.stringify({
+				type: "color",
+				color: usercolor
 			}));
 		}
 	}
@@ -154,12 +160,12 @@ $(function() {
 	}
 
 	$("#chat-colors a").click(function() {
-		var color = rgb2hex($(this).css("background-color")).toUpperCase();
-		Cookies.set("color", color);
+		usercolor = rgb2hex($(this).css("background-color")).toUpperCase();
+		Cookies.set("color", usercolor);
 
 		ws.send(JSON.stringify({
 			type: "color",
-			color: color
+			color: usercolor
 		}));
 	});
 
@@ -248,6 +254,11 @@ $(function() {
 					type: "register",
 					name: username
 				}));
+
+				ws.send(JSON.stringify({
+					type: "color",
+					color: usercolor
+				}));
 			}
 		};
 
@@ -268,6 +279,8 @@ $(function() {
 			} else if(json.type == "message") {
 				appendMessage(json);
 			} else if(json.type == "color") {
+				usercolor = json.color;
+
 				$("#chat-colors a").removeClass("selected");
 				$("#chat-colors a").each(function(i) {
 					if(rgb2hex($(this).css("background-color")).toUpperCase() == json.color) {

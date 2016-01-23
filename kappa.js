@@ -1,4 +1,5 @@
 var http = require("http");
+var config = require("./config.json");
 
 module.exports = {
 	emotes: {},
@@ -37,12 +38,7 @@ http.get("http://twitchemotes.com/api_cache/v2/global.json", function(res) {
 	});
 });
 
-var ignoredChannels = [
-	'agetv1', 'gsl', 'gomexp_2014_season_two', 'canadacup', 'werster',
-	'beyondthesummit', 'srkevo1', 'thepremierleague',
-	'starladder1', 'qfmarine', 'worldclasslol',
-	'ilastpack', 'nadeshot', 'fahr3nh3it_ftw'
-];
+var ignoredChannels = config.kappafy.ignored;
 
 http.get("http://twitchemotes.com/api_cache/v2/subscriber.json", function(res) {
 	var body = "";

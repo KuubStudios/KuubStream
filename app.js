@@ -4,6 +4,7 @@ var express = require("express");
 var http = require("http");
 var WebSocketServer = require("websocket").server;
 
+var config = require("./config.json");
 var chat = require("./chat");
 
 var app = express();
@@ -20,7 +21,7 @@ app.get("/:channel", function(req, res) {
 });
 
 function validateOrigin(origin) {
-	return origin == "https://stream.kuubstudios.com";
+	return origin == config.origin;
 }
 
 websocket.on("request", function(req) {

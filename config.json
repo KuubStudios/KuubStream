@@ -1,0 +1,6 @@
+{
+	"origin": "https://stream.kuubstudios.com",
+	"kappafy": {
+		"ignored": ["agetv1", "gsl", "gomexp_2014_season_two", "canadacup", "werster", "beyondthesummit", "srkevo1", "thepremierleague", "starladder1", "qfmarine", "worldclasslol", "ilastpack", "nadeshot", "fahr3nh3it_ftw"]
+	}
+}

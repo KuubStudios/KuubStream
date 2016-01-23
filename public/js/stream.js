@@ -12,17 +12,17 @@ $(function() {
 		player = new MediaPlayer(context); 
 		player.startup();
 		player.attachView(video[0]);
-		player.attachSource("https://stream.kuubstudios.com/dash/" + channel + ".mpd");
+		player.attachSource("https://" + window.location.hostname + "/dash/" + channel + ".mpd");
 	} else {
 		jwplayer.key = "tLc/F7baAVot/r1LiOBmCg8muQ+qhMxWmmfZmg==";
 
 		player = jwplayer("player");
 		player.setup({
-			aboutlink: "https://kuubstudios.com/",
+			aboutlink: "https://github.com/KuubStudios/KuubStream",
 			abouttext:"Kuub Studios Cinema",
 			skin: "glow",
 			image: "offline.png",
-			file: "rtmp://vps.kuubstudios.com/stream/" + channel,
+			file: "rtmp://" + window.location.hostname + "/stream/" + channel,
 			autostart: "true",
 			stretching: "uniform",
 			width: "100%",
@@ -244,7 +244,7 @@ $(function() {
 
 	var ws;
 	function start() {
-		ws = new WebSocket("wss://stream.kuubstudios.com/ws?room=" + channel);
+		ws = new WebSocket("wss://" + window.location.hostname + "/ws?room=" + channel);
 		ws.onopen = function() {
 			console.log("websocket opened");
 			if(username === undefined) {

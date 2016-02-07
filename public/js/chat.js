@@ -1,94 +1,34 @@
-var connectServer = function() {
-	console.warn("connectServer called before loaded!");
-};
-
 $(function() {
-	//$(".tse-scrollable").TrackpadScrollEmulator();
+	$(".tse-scrollable").TrackpadScrollEmulator();
 
 	var channel = $("#container").data("channel");
-	var source = $("#container").data("source");
 
-	console.log("source: " + source);
+	$.getJSON("/api/servers", function(data) {
+		var found = false;
+		$("#servers").empty();
+		for(var name in data) {
+			$("#servers").append($("<option>").attr("value", data[name]).text(name));
 
-
-	var ua = navigator.userAgent.toLowerCase();
-	var isAndroid = ua.indexOf("android") > -1;
-	if(isAndroid) {
-		$("#player").html('Click <a href="' + source + '">here</a> to view this stream');
-	} else {
-		jwplayer.key = "tLc/F7baAVot/r1LiOBmCg8muQ+qhMxWmmfZmg==";
-		var player = jwplayer("player");
-		//connectServer(source);
-
-		connectServer = function(host) {
-			console.log("connecting to " + host);
-			//player.load({file:"rtmp://" + host + "/stream/" + channel,type: "rtmp"});
-			//player.load("rtmp://" + host + "/stream/" + channel);
-
-			player.setup({
-				aboutlink: "https://github.com/KuubStudios/KuubStream",
-				abouttext:"Kuub Studios Cinema",
-				skin: "glow",
-				image: "offline.png",
-				file: "rtmp://" + host + "/stream/" + channel,
-				autostart: "true",
-				stretching: "uniform",
-				width: "100%",
-				height: "100%"
-			});
+			if(Cookies.get("server") == name) {
+				found = true;
+				$("#servers").val(data[name]).change();
+			}
 		}
 
-		/*
-		$.getJSON("/api/servers", function(data) {
-			if(Cookies.get("server") == undefined) {
+		if(Cookies.get("server") == undefined || found == false) {
+			if(connectServer != undefined) {
 				connectServer(data[Object.keys(data)[0]]);
 			}
+		}
+	});
 
-			$("#servers").empty();
-			for(var name in data) {
-				$("#servers").append($("<option>").attr("value", data[name]).text(name));
-
-				if(Cookies.get("server") == name) {
-					$("#servers").val(data[name]).change();
-				}
-			}
-		});
-
-		$("#servers").change(function(e) {
-			Cookies.set("server", $("option:selected", this).text());
+	$("#servers").change(function(e) {
+		Cookies.set("server", $("option:selected", this).text());
+		if(connectServer != undefined) {
 			connectServer(this.value);
-		});
-		*/
-	}
+		}
+	});
 
-	/*
-	if(window.location.hash == "#dash") {
-		var video = $("<video>").attr("id", "video-player").attr("controls", true).attr("autoplay", true).attr("preload", "none");
-		$("#player").text("").append(video);
-
-		var context = new Dash.di.DashContext();
-		player = new MediaPlayer(context); 
-		player.startup();
-		player.attachView(video[0]);
-		player.attachSource("https://live.kuubstudios.com/dash/" + channel + ".mpd");
-	} else {
-		jwplayer.key = "tLc/F7baAVot/r1LiOBmCg8muQ+qhMxWmmfZmg==";
-
-		player = jwplayer("player");
-		player.setup({
-			aboutlink: "https://github.com/KuubStudios/KuubStream",
-			abouttext:"Kuub Studios Cinema",
-			skin: "glow",
-			image: "offline.png",
-			file: source,
-			autostart: "true",
-			stretching: "uniform",
-			width: "100%",
-			height: "100%"
-		});
-	}*/
-
-	/*
 	var username, usercolor;
 	function joinChat() {
 		username = $("#chat-username").val().trim();
@@ -222,7 +162,13 @@ $(function() {
 	});
 
 	$("#btn-popout").click(function() {
-		window.open("/" + channel + "/chat", channel + " - Chat", "right=50,top=50,width=340,height=600,resizable=yes,scrollbars=no,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no");
+		var q = "";
+		console.log(username);
+		if(username != undefined) {
+			q = "?user=" + username;
+		}
+
+		window.open("/" + channel + "/chat" + q, channel + " - Chat", "right=50,top=50,width=340,height=600,resizable=yes,scrollbars=no,toolbar=no,location=no,directories=no,status=no,menubar=no,copyhistory=no");
 	});
 
 	function rgb2hex(orig){
@@ -378,5 +324,4 @@ $(function() {
 		setInterval(check, 4000);
 	}
 	start();
-	*/
 });

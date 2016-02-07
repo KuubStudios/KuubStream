@@ -15,7 +15,7 @@ module.exports = {
 		if(this.rooms[room] == undefined) {
 			this.rooms[room] = new Room(this);
 		}
-		
+
 		var index = this.clients.push({ connection: connection, room: room, registered: false }) - 1;
 		this.rooms[room].addClient(index);
 
@@ -33,6 +33,10 @@ module.exports = {
 
 		this.rooms[client.room].removeClient(index);
 		this.clients[index] = undefined;
+	},
+
+	getRoom: function(room) {
+		return this.rooms[room];
 	},
 
 	setColor: function(index, color) {
@@ -69,7 +73,6 @@ module.exports = {
 		console.log(util.format("%s registered as %s to %s", client.connection.remoteAddress, json.name, client.room));
 
 		this.clients[index].name = json.name;
-		//this.clients[index].color = this.colors[Math.floor(Math.random() * this.colors.length)];
 		this.setColor(index);
 		this.clients[index].registered = true;
 

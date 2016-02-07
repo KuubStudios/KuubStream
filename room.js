@@ -26,6 +26,17 @@ Room.prototype.usernameTaken = function(name) {
 	return false;
 }
 
+Room.prototype.getUsers = function() {
+	var result = [];
+	for(var i=0; i < this.clients.length; i++) {
+		var client = this.chat.clients[this.clients[i]];
+		if(client != undefined && client.name != undefined) {
+			result.push(client.name);
+		}
+	}
+	return result;
+}
+
 Room.prototype.broadcast = function(msg) {
 	if(typeof msg !== "string") {
 		msg = JSON.stringify(msg);

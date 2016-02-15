@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Goz3rr",
+  "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.15.0",
     "ejs": "^2.3.4",
     "express": "^4.13.3",
     "linkifyjs": "^2.0.0-beta.7",

@@ -1,4 +1,4 @@
-var http = require("http");
+var https = require("https");
 var config = require("./config.json");
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
 	}
 }
 
-http.get("http://twitchemotes.com/api_cache/v2/global.json", function(res) {
+https.get("https://twitchemotes.com/api_cache/v2/global.json", function(res) {
 	var body = "";
 
 	res.on("data", function(d) {
@@ -40,7 +40,7 @@ http.get("http://twitchemotes.com/api_cache/v2/global.json", function(res) {
 
 var ignoredChannels = config.kappafy.ignored;
 
-http.get("http://twitchemotes.com/api_cache/v2/subscriber.json", function(res) {
+https.get("https://twitchemotes.com/api_cache/v2/subscriber.json", function(res) {
 	var body = "";
 
 	res.on("data", function(d) {

@@ -38,8 +38,6 @@ https.get("https://twitchemotes.com/api_cache/v2/global.json", function(res) {
 	});
 });
 
-var ignoredChannels = config.kappafy.ignored;
-
 https.get("https://twitchemotes.com/api_cache/v2/subscriber.json", function(res) {
 	var body = "";
 
@@ -52,7 +50,7 @@ https.get("https://twitchemotes.com/api_cache/v2/subscriber.json", function(res)
 
 		var template = json.template.small;
 		for(var channel in json.channels) {
-			if(ignoredChannels.indexOf(channel.toLowerCase()) > -1) {
+			if(config.kappafy.ignored.indexOf(channel.toLowerCase()) > -1) {
 				continue;
 			}
 
@@ -60,6 +58,23 @@ https.get("https://twitchemotes.com/api_cache/v2/subscriber.json", function(res)
 				var emote = json.channels[channel].emotes[i].code;
 				module.exports.emotes[emote] = template.replace("{image_id}", json.channels[channel].emotes[i].image_id);
 			}
+		}
+	});
+});
+
+https.get("https://api.betterttv.net/2/emotes", function(res) {
+	var body = "";
+
+	res.on("data", function(d) {
+		body += d;
+	});
+
+	res.on("end", function() {
+		var json = JSON.parse(body);
+
+		var template = json.urlTemplate;
+		for(var i = 0; i < json.emotes.length; i++) {
+			module.exports.emotes[json.emotes[i].code] = template.replace("{{id}}", json.emotes[i].id).replace("{{image}}", "1x");
 		}
 	});
 });

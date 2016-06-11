@@ -8,6 +8,7 @@ var dns = require("dns");
 
 var config = require("./config.json");
 var chat = require("./chat");
+var servers = require("./servers");
 var stream = require("./stream");
 
 var app = express();
@@ -21,37 +22,9 @@ var websocket = new WebSocketServer({
 	autoAcceptConnections: false
 });
 
-var liveServers = {};
-var liveStreams = {};
-var validNodes = [];
-var nodeMap = {};
-
-function resolveHost(name) {
-	var host = config.servers[name];
-	dns.resolve4(host, function(err, addresses) {
-		validNodes = validNodes.concat(addresses);
-		nodeMap[host] = {};
-		nodeMap[host].ip = addresses[0];
-		nodeMap[host].rooms = {};
-	});
-}
-
-for(var name in config.servers) {
-	resolveHost(name);
-}
-
-function ipToHost(ip) {
-	for(var name in nodeMap) {
-		if(nodeMap[name].ip == ip) {
-			return name;
-		}
-	}
-}
-
 app.get("/:channel", function(req, res) {
 	res.render("index", {
-		name: req.params.channel,
-		source: config.rtmp.replace("{room}", req.params.channel)
+		name: req.params.channel
 	});
 });
 
@@ -63,12 +36,12 @@ app.get("/:channel/chat", function(req, res) {
 });
 
 app.get("/api/servers", function(req, res) {
-	res.send(JSON.stringify(liveServers));
+	res.send(JSON.stringify(servers.getLiveServers()));
 });
 
 app.get("/api/streams", function(req, res) {
 	var live = [];
-	for(var name in liveStreams) {
+	for(var name in stream.getLiveStreams()) {
 		live.push(name);
 	}
 
@@ -87,9 +60,15 @@ app.get("/api/:channel/viewers", function(req, res) {
 	}));
 });
 
+app.get("/api/:channel/hitbox", function(req, res) {
+
+});
+
 app.post("/callback/publish", function(req, res) {
-	if(validNodes.indexOf(req.headers["x-forwarded-for"]) == -1) {
+	var host = servers.ipToHost(req.headers["x-forwarded-for"]);
+	if(host === false) {
 		console.warn("unauthorized callback from " + req.headers["x-forwarded-for"]);
+		res.sendStatus(403);
 		return;
 	}
 
@@ -98,100 +77,61 @@ app.post("/callback/publish", function(req, res) {
 		return;
 	}
 
-	//console.log(req.body);
-
-	if(liveStreams[req.body.name] == undefined) {
-		var host = ipToHost(req.headers["x-forwarded-for"]);
+	if(stream.startStream(req.body.name, host, req.headers["x-forwarded-for"])) {
 		console.log("channel %s going live on %s from %s", req.body.name, host, req.body.addr);
-		liveStreams[req.body.name] = {
-			host: host,
-			ip: req.headers["x-forwarded-for"]
-		};
-
 		res.sendStatus(200);
 	} else {
-		console.log("channel %s is already live on %s new attempt from %s", req.body.name, liveStreams[req.body.name].host, req.body.addr);
-
+		console.log("channel %s is already live on %s new attempt from %s", req.body.name, stream.streams[req.body.name].host, req.body.addr);
 		res.sendStatus(401);
 	}
 });
 
 app.post("/callback/publish_done", function(req, res) {
-	if(validNodes.indexOf(req.headers["x-forwarded-for"]) == -1) {
+	var host = servers.ipToHost(req.headers["x-forwarded-for"]);
+	if(host === false) {
 		console.warn("unauthorized callback from " + req.headers["x-forwarded-for"]);
+		res.sendStatus(403);
 		return;
 	}
 
-	var host = ipToHost(req.headers["x-forwarded-for"]);
-	if(liveStreams[req.body.name] && liveStreams[req.body.name].host == host) {
+	if(stream.endStream(req.body.name, host)) {
 		console.log("channel %s stopped broadcasting to %s", req.body.name, host);
-		liveStreams[req.body.name] = undefined;
 	}
+
 	res.sendStatus(200);
 });
 
 app.post("/callback/play", function(req, res) {
-	if(validNodes.indexOf(req.headers["x-forwarded-for"]) == -1) {
+	var host = servers.ipToHost(req.headers["x-forwarded-for"]);
+	if(host === false) {
 		console.warn("unauthorized callback from " + req.headers["x-forwarded-for"]);
+		res.sendStatus(403);
 		return;
 	}
 
-	//console.log("play request for %s from %s", req.body.name, req.body.addr);
-
-	if(liveStreams[req.body.name] != undefined) {
-		//console.log("live on " + liveStreams[req.body.name].host);
-		var ip = liveStreams[req.body.name].ip;
-
+	var ip = stream.startPlayback(req.body.name);
+	if(ip) {
 		if(req.headers["x-forwarded-for"] == ip) {
-			//console.log("local");
 			res.sendStatus(200);
 		} else {
-			//console.log("remote rtmp://" + ip + "/stream/" + req.body.name);
 			res.redirect(302, "rtmp://" + ip + "/stream/" + req.body.name);
 		}
 	} else {
-		//console.log("offline");
 		res.sendStatus(404);
 	}
 });
 
 app.post("/callback/play_done", function(req, res) {
-	if(validNodes.indexOf(req.headers["x-forwarded-for"]) == -1) {
+	var host = servers.ipToHost(req.headers["x-forwarded-for"]);
+	if(host === false) {
 		console.warn("unauthorized callback from " + req.headers["x-forwarded-for"]);
+		res.sendStatus(403);
 		return;
 	}
 
+	stream.endPlayback(req.body.name);
 	res.sendStatus(200);
 });
-
-function pollSingleServer(name, host) {
-	//console.log("checking " + name + " " + host);
-	http.get("http://"+host, function(res) {
-		if(res.statusCode == 200) {
-			liveServers[name] = host;
-			//console.log(name + " is up " + host);
-		} else {
-			liveServers[name] = undefined;
-			//console.log(name + " is down");
-		}
-	}).on("error", function(e) {
-		liveServers[name] = undefined;
-		//console.log(name + " is down");
-	});
-}
-
-function pollServers() {
-	for(var name in config.servers) {
-		pollSingleServer(name, config.servers[name]);
-	}
-}
-
-for(var name in config.servers) {
-	liveServers[name] = config.servers[name];
-}
-
-setInterval(pollServers, 1000 * 60);
-pollServers();
 
 function validateOrigin(origin) {
 	return origin == config.origin;

@@ -1,9 +1,8 @@
 {
 	"origin": "https://stream.kuubstudios.com",
-	"rtmp": "rtmp://stream.kuubstudios.com/stream/{room}",
 	"servers": {
-		"Ireland": "faraday.kuubstudios.com",
-		"Germany": "newton.kuubstudios.com",
+		"Ireland": "newton.kuubstudios.com",
+		"Ireland 2": "faraday.kuubstudios.com",
 		"Iowa": "darwin.kuubstudios.com"
 	},
 	"kappafy": {

@@ -97,6 +97,10 @@ module.exports = {
 		text = linkify(text, { target: "_blank" });
 		text = kappa.kappafy(text);
 
+		if(text.substring(0, 4) == '&gt;') {
+			text = '<span style="color:#789922 !important">' + text + '</span>';
+		}
+
 		this.rooms[client.room].sendMessage(client, text);
 	}
 }

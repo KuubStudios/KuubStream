@@ -7,5 +7,8 @@
 	},
 	"kappafy": {
 		"ignored": ["agetv1", "gsl", "gomexp_2014_season_two", "canadacup", "werster", "beyondthesummit", "srkevo1", "thepremierleague", "starladder1", "qfmarine", "worldclasslol", "ilastpack", "nadeshot", "fahr3nh3it_ftw"]
+	},
+	"static": {
+		"kbs1": "rtmp://101.79.243.4/1tv/_definst_/1tv_5.stream?id=2101&si=6&secure=NGQyYWZkOThjMzU4NmNkYmNjM2I5YzdkNTE5MWVmOTc1ZjM4NzAxYjcwYmRmZDAzMzNiOTY0MTdmN2Q2MzU2ODk1NzI3MTBhMTkzNmEzMmJmN2FlN2QwYzljYzUxZTY1M2FiNWQxYzM4ZmM5ZTBkMDNjMWUxMTE2Y2MzOTUxMjhhMzk2ZmQ1NTY3YjRlOGY3YjI0ODFlOTFjZTdhYjNjOGQ0OTQyYzNjYzU3MTU5NjQ3YTY4ZDhiNTdiNGJhMWQ4OGEzNTQ3NDQwZTI0ZGRkN2QwMGE5OTBlNmM4ZGExNjhmNzQ0ODRkNWIyNmFiNGU1M2ZkMzIzYzg0ZWVkZmQ2N2ViZDUzZDNkNDJmNzEzODhhZTkwNDM1ZGQ5NjIyM2Jj&csu=false"
 	}
 }

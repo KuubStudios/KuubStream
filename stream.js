@@ -1,7 +1,13 @@
+var config = require("./config.json");
+
 module.exports = {
 	streams: {},
 
 	startStream: function(name, host, ip) {
+		if(config.static[name] !== undefined) {
+			return false;
+		}
+
 		if(this.streams[name] === undefined) {
 			this.streams[name] = {
 				host: host,
@@ -9,9 +15,9 @@ module.exports = {
 			};
 
 			return true;
-		} else {
-			return false;
 		}
+
+		return false;
 	},
 
 	endStream: function(name, host) {
@@ -27,8 +33,18 @@ module.exports = {
 	},
 
 	startPlayback: function(name) {
+		if(config.static[name] !== undefined) {
+			return {
+				type: "static",
+				host: config.static[name]
+			};
+		}
+
 		if(this.streams[name] != undefined) {
-			return this.streams[name].ip;
+			return {
+				type: "ip",
+				host: this.streams[name].ip
+			};
 		}
 
 		return false;

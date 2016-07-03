@@ -109,15 +109,20 @@ app.post("/callback/play", function(req, res) {
 		return;
 	}
 
-	var ip = stream.startPlayback(req.body.name);
-	if(ip) {
-		if(req.headers["x-forwarded-for"] == ip) {
+	var target = stream.startPlayback(req.body.name);
+	if(target === false) {
+		res.sendStatus(404);
+		return;
+	}
+
+	if(target.type === "ip") {
+		if(req.headers["x-forwarded-for"] == target.host) {
 			res.sendStatus(200);
 		} else {
-			res.redirect(302, "rtmp://" + ip + "/stream/" + req.body.name);
+			res.redirect(302, "rtmp://" + target.host + "/stream/" + req.body.name);
 		}
-	} else {
-		res.sendStatus(404);
+	} else if(target.type == "static") {
+		res.redirect(302, target.host);
 	}
 });
 
